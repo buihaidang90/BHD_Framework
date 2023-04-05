@@ -1,0 +1,5 @@
+c:\users\haidang\documents\visual studio 2015\Projects\BHD_Framework\BHD_Framework\bin\Debug\BHD_Framework.dll
+c:\users\haidang\documents\visual studio 2015\Projects\BHD_Framework\BHD_Framework\bin\Debug\BHD_Framework.pdb
+c:\users\haidang\documents\visual studio 2015\Projects\BHD_Framework\BHD_Framework\obj\Debug\BHD_Framework.csprojResolveAssemblyReference.cache
+c:\users\haidang\documents\visual studio 2015\Projects\BHD_Framework\BHD_Framework\obj\Debug\BHD_Framework.dll
+c:\users\haidang\documents\visual studio 2015\Projects\BHD_Framework\BHD_Framework\obj\Debug\BHD_Framework.pdb
