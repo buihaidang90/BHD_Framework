@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Text;
 
@@ -13,19 +14,28 @@ namespace BHD_Framework
         /// <param name="KeyString">The key in front of equal sign</param>
         /// <param name="YourString">Your text</param>
         /// <returns></returns>
-        public static string GetValueOf(string KeyString, string YourString)
+        public static string GetValueOf(string KeyString, string YourString) { return GetValueOf(KeyString, "=", YourString); }
+        /// <summary>
+        /// Get string in behind split sign base on your key string
+        /// </summary>
+        /// <param name="KeyString">The key string in front of split sign</param>
+        /// <param name="SplitSign">The split characters</param>
+        /// <param name="YourString">Your text</param>
+        /// <returns></returns>
+        public static string GetValueOf(string KeyString, string SplitSign, string YourString)
         {
-            //your key = your.value.will.be.this
-            string _result = "";
+            //your key : your.value.will.be.this
+            string result = "";
             int indexKeyString = YourString.IndexOf(KeyString);
-            if (indexKeyString < 0) return _result;
-            string EqualSign = "=";
-            int indexEqualSign = YourString.IndexOf(EqualSign);
-            int indexBegin = indexEqualSign + EqualSign.Length;
-            if (indexEqualSign < 0) return _result;
-            try { _result = YourString.Substring(indexBegin, YourString.Length - indexBegin).Trim(); }
+            if (indexKeyString < 0) return result;
+            int indexSplitSign = YourString.IndexOf(SplitSign);
+            string s = YourString.Substring(indexKeyString + KeyString.Length, indexSplitSign - indexKeyString - KeyString.Length);
+            if (s.Trim() != "") return result;
+            int indexBegin = indexSplitSign + SplitSign.Length;
+            if (indexSplitSign < 0) return result;
+            try { result = YourString.Substring(indexBegin, YourString.Length - indexBegin).Trim(); }
             catch { }
-            return _result;
+            return result;
         }
 
         [System.Runtime.InteropServices.DllImport("kernel32")]
@@ -71,6 +81,19 @@ namespace BHD_Framework
             return dic;
         }
 
+
+        public static string CreateXml(DataTable YourData)
+        {
+            StringWriter sw = new StringWriter();
+            YourData.WriteXml(sw, XmlWriteMode.IgnoreSchema);
+            return sw.ToString();
+        }
+        public static string CreateXml(DataSet YourData)
+        {
+            StringWriter sw = new StringWriter();
+            YourData.WriteXml(sw, XmlWriteMode.IgnoreSchema);
+            return sw.ToString();
+        }
 
 
     }

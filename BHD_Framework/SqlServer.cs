@@ -24,6 +24,11 @@ namespace BHD_Framework
         public static readonly string MsgInvalidConnectionString = "Connection string is not valid.";
         public static readonly string MsgInvalidTimeOut = "Time-out space value is not valid.";
         public static readonly string MsgCantOpenConnection = "Can not open connection to server.";
+        public enum SqlCommandType
+        {
+            SingleQuery,
+            StoredProcedure
+        }
     }
     public class SqlObject
     {
@@ -174,11 +179,6 @@ namespace BHD_Framework
             Connection,
             Execution
         }
-        public enum SqlCommandType
-        {
-            SingleQuery,
-            StoredProcedure
-        }
         private int _connectionTimeout = SqlSettings.DefaultConnectionTimeoutSpace;
         private int _executionTimeout = SqlSettings.DefaultExecutionTimeoutSpace;
 
@@ -267,11 +267,11 @@ namespace BHD_Framework
             return _result;
         }
 
-        private SqlCommand getSqlCommand(string SqlString, SqlCommandType CmdType, int? TimeoutSpace)
+        private SqlCommand getSqlCommand(string SqlString, SqlSettings.SqlCommandType CmdType, int? TimeoutSpace)
         {
             int _timeout = getValidTimeoutSpace(TimeoutSpace, TimeoutType.Execution);
             SqlCommand SqlCmd = new SqlCommand(SqlString, _connection);
-            SqlCmd.CommandType = (CmdType == SqlCommandType.SingleQuery ? CommandType.Text : CommandType.StoredProcedure);
+            SqlCmd.CommandType = (CmdType == SqlSettings.SqlCommandType.SingleQuery ? CommandType.Text : CommandType.StoredProcedure);
             SqlCmd.CommandTimeout = _timeout;
             return SqlCmd;
         }
@@ -279,13 +279,13 @@ namespace BHD_Framework
         public void ExecSql(string SqlString, int? TimeoutSpace)
         {
             OpenConnection();
-            SqlCommand sqlCmd = getSqlCommand(SqlString, SqlCommandType.SingleQuery, TimeoutSpace);
+            SqlCommand sqlCmd = getSqlCommand(SqlString, SqlSettings.SqlCommandType.SingleQuery, TimeoutSpace);
             sqlCmd.ExecuteNonQuery();
             sqlCmd.Dispose();
             CloseConnection();
         }
-        public void ExecSql(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams) { ExecSql(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
-        public void ExecSql(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
+        public void ExecSql(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams) { ExecSql(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
+        public void ExecSql(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
         {
             OpenConnection();
             SqlCommand sqlCmd = getSqlCommand(SqlString, CmdType, TimeoutSpace);
@@ -304,7 +304,7 @@ namespace BHD_Framework
         public object ExecScalar(string SqlString, int? TimeoutSpace)
         {
             OpenConnection();
-            SqlCommand sqlCmd = getSqlCommand(SqlString, SqlCommandType.SingleQuery, TimeoutSpace);
+            SqlCommand sqlCmd = getSqlCommand(SqlString, SqlSettings.SqlCommandType.SingleQuery, TimeoutSpace);
             object obj = sqlCmd.ExecuteScalar();
             sqlCmd.Dispose();
             CloseConnection();
@@ -315,8 +315,8 @@ namespace BHD_Framework
             try { return ExecScalar(SqlString, TimeoutSpace); }
             catch { return ExceptionResult; }
         }
-        public object ExecScalar(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams) { return ExecScalar(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
-        public object ExecScalar(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
+        public object ExecScalar(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams) { return ExecScalar(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
+        public object ExecScalar(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
         {
             OpenConnection();
             SqlCommand sqlCmd = getSqlCommand(SqlString, CmdType, TimeoutSpace);
@@ -331,14 +331,14 @@ namespace BHD_Framework
             CloseConnection();
             return obj;
         }
-        public object ExecScalar(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, object ExceptionResult) { return ExecScalar(SqlString, CmdType, SqlParams, ExceptionResult, TimeoutSpace: null); }
-        public object ExecScalar(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, object ExceptionResult, int? TimeoutSpace)
+        public object ExecScalar(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, object ExceptionResult) { return ExecScalar(SqlString, CmdType, SqlParams, ExceptionResult, TimeoutSpace: null); }
+        public object ExecScalar(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, object ExceptionResult, int? TimeoutSpace)
         {
             try { return ExecScalar(SqlString, CmdType, SqlParams, TimeoutSpace); }
             catch { return ExceptionResult; }
         }
 
-        private SqlDataAdapter getSqlAdapter(string SqlString, SqlCommandType CmdType, int? TimeoutSpace)
+        private SqlDataAdapter getSqlAdapter(string SqlString, SqlSettings.SqlCommandType CmdType, int? TimeoutSpace)
         {
             SqlCommand sqlCmd = getSqlCommand(SqlString, CmdType, TimeoutSpace);
             SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCmd);
@@ -351,7 +351,7 @@ namespace BHD_Framework
             int _timeout = getValidTimeoutSpace(TimeoutSpace, TimeoutType.Execution);
             DataTable dt = new DataTable();
             OpenConnection();
-            SqlDataAdapter sqlAdapter = getSqlAdapter(SqlString, SqlCommandType.SingleQuery, TimeoutSpace);
+            SqlDataAdapter sqlAdapter = getSqlAdapter(SqlString, SqlSettings.SqlCommandType.SingleQuery, TimeoutSpace);
             sqlAdapter.Fill(dt);
             sqlAdapter.Dispose();
             CloseConnection();
@@ -363,14 +363,14 @@ namespace BHD_Framework
         {
             DataSet ds = new DataSet();
             OpenConnection();
-            SqlDataAdapter sqlAdapter = getSqlAdapter(SqlString, SqlCommandType.SingleQuery, TimeoutSpace);
+            SqlDataAdapter sqlAdapter = getSqlAdapter(SqlString, SqlSettings.SqlCommandType.SingleQuery, TimeoutSpace);
             sqlAdapter.Fill(ds);
             sqlAdapter.Dispose();
             CloseConnection();
             return ds;
         }
 
-        private SqlDataAdapter getSqlAdapter(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
+        private SqlDataAdapter getSqlAdapter(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
         {
             SqlCommand sqlCmd = getSqlCommand(SqlString, CmdType, TimeoutSpace);
             if (SqlParams != null)
@@ -382,8 +382,8 @@ namespace BHD_Framework
             sqlCmd.Dispose();
             return sqlAdapter;
         }
-        public DataTable ExecDataTable(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams) { return ExecDataTable(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
-        public DataTable ExecDataTable(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
+        public DataTable ExecDataTable(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams) { return ExecDataTable(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
+        public DataTable ExecDataTable(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
         {
             DataTable dt = new DataTable();
             OpenConnection();
@@ -393,8 +393,8 @@ namespace BHD_Framework
             CloseConnection();
             return dt;
         }
-        public DataSet ExecDataSet(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams) { return ExecDataSet(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
-        public DataSet ExecDataSet(string SqlString, SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
+        public DataSet ExecDataSet(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams) { return ExecDataSet(SqlString, CmdType, SqlParams, TimeoutSpace: null); }
+        public DataSet ExecDataSet(string SqlString, SqlSettings.SqlCommandType CmdType, SqlParameter[] SqlParams, int? TimeoutSpace)
         {
             DataSet ds = new DataSet();
             OpenConnection();
