@@ -31,6 +31,8 @@ namespace BHD_Framework
             public double longtitude { get; set; }
             public string zip { get; set; }
         }
+
+        public static LocationDetails GetLocationDetail(string IpAddress) { return GetLocationDetail(IpAddress, null); }
         public static LocationDetails GetLocationDetail(string IpAddress, int? TimeOutSpace)
         {
             LocationDetails geoInfo = new LocationDetails();
