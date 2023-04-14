@@ -128,7 +128,7 @@ namespace BHD_Framework
                 if (_result.Length == 0) return _result;
                 foreach (string s in _lstAddition) _result += string.Concat(";", s);
             }
-            catch { }
+            catch(Exception ex) { Console.WriteLine(ex.Message); }
             return _result;
         }
         private void updateTimeoutConnectionString()

@@ -26,15 +26,12 @@ namespace BHD_Framework
         {
             //your key : your.value.will.be.this
             string result = "";
-            int indexKeyString = YourString.IndexOf(KeyString);
-            if (indexKeyString < 0) return result;
             int indexSplitSign = YourString.IndexOf(SplitSign);
-            string s = YourString.Substring(indexKeyString + KeyString.Length, indexSplitSign - indexKeyString - KeyString.Length);
-            if (s.Trim() != "") return result;
-            int indexBegin = indexSplitSign + SplitSign.Length;
             if (indexSplitSign < 0) return result;
-            try { result = YourString.Substring(indexBegin, YourString.Length - indexBegin).Trim(); }
-            catch { }
+            string s1 = YourString.Substring(0, indexSplitSign).Trim();
+            string s2 = YourString.Substring(indexSplitSign + SplitSign.Length, YourString.Length - indexSplitSign - SplitSign.Length).Trim();
+            if (s1 != KeyString) return result;
+            result = s2;
             return result;
         }
 

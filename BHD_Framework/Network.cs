@@ -9,9 +9,20 @@ namespace BHD_Framework
     {
         public static bool IsIpAddress(string IpString)
         {
-            System.Net.IPAddress ip;
-            bool validIP = System.Net.IPAddress.TryParse(IpString, out ip);
-            return validIP;
+            /*dont use IPAddress.TryParse, because it has the limitations and could result in incorrect parsing. ex ::1 or 5 TryParse return true*/
+            if (String.IsNullOrEmpty(IpString)) return false;
+            string[] splitValues = IpString.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+            if (splitValues.Length != 4) return false;
+            List<int> lst = new List<int>();
+            foreach (string valueStr in splitValues)
+            {
+                int num = 0;
+                if (!int.TryParse(valueStr, out num)) return false;
+                if (num < 0 || 255 < num) return false;
+                lst.Add(num);
+            }
+            if (lst[0] == 0 && lst[1] == 0 && lst[2] == 0 && lst[3] == 0) return false;
+            return true;
         }
 
         public struct LocationDetails
@@ -167,6 +178,20 @@ namespace BHD_Framework
              */
         }
 
+        public static string GetExternalIp()
+        {
+            string url1 = "http://ipinfo.io/ip";
+            string url2 = "http://icanhazip.com";
+            string response = new ExtendedWebClient(url1, null).DownloadString(url1).Replace("\\r\\n", "").Replace("\\n", "").Trim();
+            IPAddress externalIp = null;
+            if (!IPAddress.TryParse(response, out externalIp))
+            {
+                response = new ExtendedWebClient(url1, null).DownloadString(url2).Replace("\\r\\n", "").Replace("\\n", "").Trim();
+                IPAddress.TryParse(response, out externalIp);
+            }
+            if (externalIp == null) return string.Empty;
+            return externalIp.ToString();
+        }
 
     }
 
