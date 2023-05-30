@@ -7,4 +7,3 @@ D:\SourceGitHub\BHD_Framework\BHD_Framework\obj\Debug\BHD_Framework.dll
 D:\SourceGitHub\BHD_Framework\BHD_Framework\obj\Debug\BHD_Framework.pdb
 D:\SourceGitHub\BHD_Framework\BHD_Framework\bin\Debug\BHD_Framework.dll
 D:\SourceGitHub\BHD_Framework\BHD_Framework\bin\Debug\BHD_Framework.pdb
-D:\SourceGitHub\BHD_Framework\BHD_Framework\obj\Debug\BHD_Framework.csprojResolveAssemblyReference.cache
