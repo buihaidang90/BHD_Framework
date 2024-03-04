@@ -128,7 +128,7 @@ namespace BHD_Framework
                 if (_result.Length == 0) return _result;
                 foreach (string s in _lstAddition) _result += string.Concat(";", s);
             }
-            catch(Exception ex) { Console.WriteLine(ex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             return _result;
         }
         private void updateTimeoutConnectionString()
@@ -301,6 +301,11 @@ namespace BHD_Framework
         }
 
         public object ExecScalar(string SqlString) { return ExecScalar(SqlString, TimeoutSpace: null); }
+        public object ExecScalar(string SqlString, object ExceptionResult)
+        {
+            try { return ExecScalar(SqlString, TimeoutSpace: null); }
+            catch { return ExceptionResult; }
+        }
         public object ExecScalar(string SqlString, int? TimeoutSpace)
         {
             OpenConnection();

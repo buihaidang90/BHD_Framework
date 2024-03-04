@@ -92,6 +92,45 @@ namespace BHD_Framework
             return sw.ToString();
         }
 
+        private static void WriteToFile(string FilePath, string YourData) { WriteToFile(FilePath, new string[] { YourData }, false); }
+        private static void WriteToFile(string FilePath, string []YourData) { WriteToFile(FilePath, YourData, false); }
+        private static void WriteToFile(string FilePath, string YourData, bool CreateFileIfNotExists) { WriteToFile(FilePath, new string[] { YourData }, CreateFileIfNotExists); }
+        private static void WriteToFile(string FilePath, string[] YourData, bool CreateFileIfNotExists)
+        {
+            if (YourData == null) return;
+            if (YourData.Length == 0) return;
+            List<string> lst = new List<string>();
+            foreach (string data in YourData)
+            {
+                if (data == null) continue;
+                if (data.Trim() == string.Empty) continue;
+                lst.Add(data);
+            }
+            if (lst.Count == 0) return;
+            if (CreateFileIfNotExists)
+            {
+                try { File.Create(FilePath); } catch { Console.WriteLine("[WriteToFile] Can not create file!"); return; }
+            }
+            //if (!FilePath.EndsWith(".txt")) return;
+            if (File.Exists(FilePath))
+            {
+                List<string> results = new List<string>();
+                string[] lines = File.ReadAllLines(FilePath);
+                foreach (string line in lines)
+                {
+                    results.Add(line);
+                }
+                foreach (string item in lst)
+                {
+                    results.Add(item);
+                }
+                try { File.WriteAllLines(FilePath, results.ToArray()); } catch { Console.WriteLine("[WriteToFile] Can not write to file!"); return; }
+                return;
+            }
+            Console.WriteLine("[WriteToFile] File path is not exist!");
+        }
 
     }
+
+
 }
